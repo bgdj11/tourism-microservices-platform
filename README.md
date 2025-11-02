@@ -1,108 +1,108 @@
-# SOA implementirano:
+# SOA Tourism App 
 
-##  Implementirane funkcionalnosti
-
-###  1. Kontrolna tačka (KT1)
-
-- Neregistrovani korisnik može da se registruje i odabere ulogu:
-  - **Turista**
-  - **Vodič**
-  - **Administrator** (ubacuje se direktno u bazu)
-- Profil korisnika obuhvata:
-  - korisničko ime
-  - lozinku
-  - email
-  - ulogu
-- Korisnik može da menja informacije sa svog profila.
+A service‑oriented, microservices‑based tourism platform developed as part of a university SOA course. The system covers tour management, user interaction (blogs, comments, likes, following), purchases, and tour execution (with a position simulator). The backend is fully containerized via **Docker Compose**, fronted by a **Traefik** gateway, and instrumented with a complete **observability** stack (Prometheus, Grafana, Loki, Jaeger, cAdvisor, Node Exporter).
 
 ---
 
-###  Docker
+## Key Features 🔑
 
-- Napisan je **Dockerfile** za svaki servis (Stakeholders, Tours, Purchase).
-- Napisan je **docker-compose.yml** koji podiže sve servise zajedno sa MongoDB bazom.
-- Omogućena je **međusobna komunikacija** između izolovanih kontejnera i frontend aplikacije.
-
----
-
-###  2. Kontrolna tačka (KT2)
-
-- Autor može da kreira **draft turu**:
-  - naziv, opis, težina, tagovi
-  - cena postavljena na **0**
-  - status ture: **draft**
-  - autor može da vidi sve svoje ture
-- Autor može da dodaje **ključne tačke** (checkpoint-ove):
-  - geo. širina i dužina
-  - naziv
-  - opis
-  - slika
-- Dužina ture se automatski izračunava na osnovu ključnih tačaka.
-- Implementiran **Simulator pozicije**:
-  - turista vidi mapu
-  - može klikom da definiše trenutnu lokaciju
-  - lokacija se koristi za **Tour Execution**
+- **Microservices** — independently deployable services, each with its own datastore.
+- **Gateway (Traefik)** — central entrypoint, routing, service discovery via labels.
+- **Communication** — REST, RPC (**gRPC**), and async pub/sub (**NATS**) where applicable.
+- **Observability** — Prometheus (metrics), Grafana (dashboards), Loki (logs), Jaeger (tracing), cAdvisor/Node Exporter (host & container metrics).
+- **Docker‑first** — reproducible builds, isolated networks, named volumes, and a single `docker compose` to run the stack.
+- **Security & Roles** — Admin, Guide, Tourist (authorization/role checks at endpoints).
 
 ---
 
-###  3. Kontrolna tačka (KT3)
+## Services (implemented / planned) 🧩
 
-- Turista može da kupi objavljene ture:
-  - dodavanje ture u **korpu (ShoppingCart)**
-  - svaka stavka u korpi sadrži:
-    - naziv ture
-    - cenu
-    - id ture
-  - korpa računa **ukupnu cenu**
-- Kada turista uradi **Checkout**:
-  - generišu se tokeni (**TourPurchaseToken**) za kupljene ture
-  - kupljene ture prikazuju sve ključne tačke
-- Pravila:
-  - arhivirane ture se ne mogu kupiti
-  - nekupljene ture prikazuju samo osnovne informacije
-- Frontend omogućava:
-  - pregled korpe
-  - kupovinu tura
-  - pregled kupljenih tura i njihovih detalja
+- **Auth Service** — registration, authentication, roles (Admin, Guide, Tourist).
+- **Blog Service** — blog posts, comments, likes (Markdown support).
+- **Tour Service** — tours, geo key points, statuses (draft/published/archived), distance calculation, position simulation & execution tracking.
+- **Followers Service** — follow graph & recommendations (**Neo4j**).
+- **Purchase Service** — cart, order items, checkout / purchase tokens.
+- **Gateway** — **Traefik** reverse proxy with per‑service routing.
+- **Monitoring Stack** — Prometheus, Grafana, Loki (+ Promtail), Jaeger, cAdvisor, Node Exporter.
+
+> Some services may be stubs or partially implemented in this iteration.
 
 ---
 
-###  SAGA obrazac 
+## Tech Stack 🛠️
 
-Implementiran je **SAGA obrazac** preko orkestracije između dva mikroservisa:
-
-- **Purchase API** (korpa i checkout)
-- **Tours API** (ture i rezervacije)
-
-**Proces Checkout-a:**
-
-1. Purchase API pokušava da rezerviše sve ture u Tours API-ju (`/reserve` endpoint).
-2. Ako je rezervacija uspešna → kreiraju se tokeni o kupovini.
-3. Nakon uspešne kupovine, ture se potvrđuju (`/confirm` endpoint).
-4. Ako bilo šta pukne, sve prethodne rezervacije se otkazuju (`/cancel` endpoint).
-
-Ovo obezbeđuje **atomicnost** procesa kupovine i otporan je na delimične greške.
+- **Platform:** Docker, Docker Compose
+- **Gateway/Proxy:** Traefik
+- **Datastores:** MongoDB (documents), Neo4j (graph)
+- **Messaging:** NATS (pub/sub)
+- **RPC:** gRPC
+- **Observability:** Prometheus, Grafana, Loki, Promtail, Jaeger, cAdvisor, Node Exporter
+- **Testing:** Postman / cURL
 
 ---
 
-##  Frontend
+## Getting Started 🚀
 
-- Napisan u **Angular-u**.
-- Omogućava:
-  - Registraciju / login
-  - Pregled i izmenu profila
-  - Pregled svih objavljenih tura
-  - Dodavanje tura u korpu
-  - Checkout procesa (kupovina)
-  - Pregled kupljenih tura i detalja (sa mapom i checkpoint-ima)
-  - Simulator pozicije turiste
+### Prerequisites 🧰
 
----
+- Docker & Docker Compose installed
+- (Optional) Ensure the ports below are available on your machine
 
-##  Pokretanje
-
-### Preko Dockera:
+### Quick Run ▶️
 
 ```bash
-docker-compose up --build
+docker compose up --build
+# or in background:
+docker compose up -d --build
 ```
+
+### Default Local Endpoints 🌐
+
+- **Gateway (API entry):** `http://localhost:8080`
+- **Grafana:** `http://localhost:3000`
+- **Prometheus:** `http://localhost:9090`
+- **Jaeger:** `http://localhost:16686`
+- **Loki:** `http://localhost:3100`
+
+> Swagger/OpenAPI UIs are exposed per service (check each service’s README or `docker-compose.yml` labels/ports).
+
+---
+
+## Docker & Gateway Notes 🐳
+
+- Each service has a dedicated **Dockerfile**; `docker-compose.yml` builds, networks, and runs everything together.
+- **Traefik** is configured via labels on services in `docker-compose.yml` for automatic routing and discovery.
+- **Named volumes** persist database data (MongoDB, Neo4j) and observability components as needed.
+- A dedicated **bridge network** enables secure, container‑internal service communication.
+
+---
+
+## Observability 🔭
+
+- **Metrics** — Services expose metrics endpoints consumed by **Prometheus**. **cAdvisor** and **Node Exporter** provide container and host metrics.
+- **Dashboards** — **Grafana** visualizes application and infra metrics (CPU, memory, FS, network, error rates, latency, RPS).
+- **Logs** — **Promtail** ships container logs to **Loki**; you can query and correlate logs in Grafana Explore.
+- **Tracing** — **Jaeger** collects distributed traces across REST/RPC requests; use it to analyze latency and bottlenecks.
+
+---
+
+## Development 👨‍💻
+
+- Run individual services locally or through Docker. Prefer Docker for parity with the full stack.
+- Configure environment variables via `.env` and service‑specific configs. **Do not commit real secrets.**
+- Use Postman / cURL for endpoint testing; keep shared collections in `/postman` (if present).
+- When adding new services, provide:
+  - `Dockerfile`
+  - Traefik labels (router rule, service name, port)
+  - Health/metrics endpoints
+  - `docker-compose.yml` service block
+
+---
+
+## Authors 👥
+<a href="https://github.com/bgdj11">
+  <img src="https://github.com/bgdj11.png?size=80" width="48" height="48" alt="@bgdj11" />
+</a>
+<a href="https://github.com/milosmat">
+  <img src="https://github.com/milosmat.png?size=80" width="48" height="48" alt="@milosmat" />
+</a>

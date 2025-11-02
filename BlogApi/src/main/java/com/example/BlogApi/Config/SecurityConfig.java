@@ -47,7 +47,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Skip Bearer token parsing for public GETs and actuator endpoints so Authorization header doesn't cause 401
     private BearerTokenResolver skippingResolver() {
         DefaultBearerTokenResolver defaultResolver = new DefaultBearerTokenResolver();
         return request -> {

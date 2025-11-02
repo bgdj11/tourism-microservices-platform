@@ -26,6 +26,7 @@ services:
     ports: ["27018:27017"]
 
   mongo_tour:
+  
     image: mongo:6
     volumes: ["mongo-tour:/data/db"]
     restart: unless-stopped

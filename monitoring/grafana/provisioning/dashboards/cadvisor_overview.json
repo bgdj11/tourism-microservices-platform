@@ -1,9 +1,9 @@
 
 {
   "uid": "cadvisor-overview",
-  "title": "cAdvisor - Containers Overview (Total)",
+  "title": "cAdvisor - Containers Overview",
   "schemaVersion": 39,
-  "version": 3,
+  "version": 2,
   "editable": true,
   "time": { "from": "now-1h", "to": "now" },
   "refresh": "10s",
@@ -12,70 +12,65 @@
   "panels": [
     {
       "type": "timeseries",
-      "title": "Total CPU Usage - All Containers (cores)",
+  "title": "CPU by service (cores)",
       "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
       "datasource": { "type": "prometheus", "uid": "prom" },
       "fieldConfig": { "defaults": { "unit": "cores", "min": 0 } },
       "options": { "legend": { "displayMode": "list", "placement": "right" } },
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"cAdvisor\", id=\"/\"}[1m]))",
-          "legendFormat": "Total CPU",
+          "expr": "topk(5, sum by (name) ( label_replace(rate(container_cpu_usage_seconds_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"container_label_com_docker_compose_service\", \"(.+)\") or label_replace(rate(container_cpu_usage_seconds_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"id\", \".*/docker/([a-z0-9]+)$\") or label_replace(rate(container_cpu_usage_seconds_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"id\", \".*/docker-([a-z0-9]+)\\\\.scope$\") ))",
+          "legendFormat": "{{name}}",
           "refId": "A"
         }
       ]
     },
     {
       "type": "timeseries",
-      "title": "Total Memory Usage - All Containers (bytes)",
+  "title": "Memory by service (bytes)",
       "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
       "datasource": { "type": "prometheus", "uid": "prom" },
       "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 } },
       "options": { "legend": { "displayMode": "list", "placement": "right" } },
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{job=\"cAdvisor\", id=\"/\"}",
-          "legendFormat": "Total Memory",
+          "expr": "topk(5, max by (name) ( label_replace(container_memory_usage_bytes{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}, \"name\", \"$1\", \"container_label_com_docker_compose_service\", \"(.+)\") or label_replace(container_memory_usage_bytes{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}, \"name\", \"$1\", \"id\", \".*/docker/([a-z0-9]+)$\") or label_replace(container_memory_usage_bytes{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}, \"name\", \"$1\", \"id\", \".*/docker-([a-z0-9]+)\\\\.scope$\") ))",
+          "legendFormat": "{{name}}",
           "refId": "A"
-        },
-        {
-          "expr": "container_memory_working_set_bytes{job=\"cAdvisor\", id=\"/\"}",
-          "legendFormat": "Working Set",
-          "refId": "B"
         }
       ]
     },
     {
       "type": "timeseries",
-      "title": "Total Network I/O - All Containers (bytes/s)",
+  "title": "Network I/O by service (bytes/s)",
       "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
       "datasource": { "type": "prometheus", "uid": "prom" },
-      "fieldConfig": { "defaults": { "unit": "Bps" } },
+  "fieldConfig": { "defaults": { "unit": "Bps" } },
       "options": { "legend": { "displayMode": "list", "placement": "right" } },
       "targets": [
         {
-          "expr": "sum(rate(container_network_receive_bytes_total{job=\"cAdvisor\", id=\"/\"}[1m]))",
-          "legendFormat": "Received",
+          "expr": "sum by (name) ( label_replace(rate(container_network_receive_bytes_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"container_label_com_docker_compose_service\", \"(.+)\") or label_replace(rate(container_network_receive_bytes_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"id\", \".*/docker/([a-z0-9]+)$\") or label_replace(rate(container_network_receive_bytes_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"id\", \".*/docker-([a-z0-9]+)\\\\.scope$\") )",
+          "legendFormat": "recv {{name}}",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(container_network_transmit_bytes_total{job=\"cAdvisor\", id=\"/\"}[1m]))",
-          "legendFormat": "Transmitted",
+          "expr": "sum by (name) ( label_replace(rate(container_network_transmit_bytes_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"container_label_com_docker_compose_service\", \"(.+)\") or label_replace(rate(container_network_transmit_bytes_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"id\", \".*/docker/([a-z0-9]+)$\") or label_replace(rate(container_network_transmit_bytes_total{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}[1m]), \"name\", \"$1\", \"id\", \".*/docker-([a-z0-9]+)\\\\.scope$\") )",
+          "legendFormat": "trans {{name}}",
           "refId": "B"
         }
       ]
     },
     {
       "type": "timeseries",
-      "title": "Total Filesystem Usage - All Containers (bytes)",
+  "title": "Filesystem usage by service (bytes)",
       "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
       "datasource": { "type": "prometheus", "uid": "prom" },
       "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 } },
       "options": { "legend": { "displayMode": "list", "placement": "right" } },
       "targets": [
         {
-          "expr": "sum(container_fs_usage_bytes{job=\"cAdvisor\", id=\"/\", device=~\"overlay.*\"})",
-          "legendFormat": "Total FS Usage",
+          "expr": "topk(10, max by (name) ( label_replace(container_fs_usage_bytes{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}, \"name\", \"$1\", \"container_label_com_docker_compose_service\", \"(.+)\") or label_replace(container_fs_usage_bytes{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}, \"name\", \"$1\", \"id\", \".*/docker/([a-z0-9]+)$\") or label_replace(container_fs_usage_bytes{job=\"cAdvisor\", id!~\".*buildkit.*|.*buildx.*\"}, \"name\", \"$1\", \"id\", \".*/docker-([a-z0-9]+)\\\\.scope$\") ))",
+          "legendFormat": "{{name}}",
           "refId": "A"
         }
       ]
