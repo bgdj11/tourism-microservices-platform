@@ -4,32 +4,32 @@ A service‑oriented, microservices‑based tourism platform developed as part o
 
 ---
 
-## Key Features 🔑
+## Key Features
 
-- **Microservices** — independently deployable services, each with its own datastore.
-- **Gateway (Traefik)** — central entrypoint, routing, service discovery via labels.
-- **Communication** — REST, RPC (**gRPC**), and async pub/sub (**NATS**) where applicable.
-- **Observability** — Prometheus (metrics), Grafana (dashboards), Loki (logs), Jaeger (tracing), cAdvisor/Node Exporter (host & container metrics).
-- **Docker‑first** — reproducible builds, isolated networks, named volumes, and a single `docker compose` to run the stack.
-- **Security & Roles** — Admin, Guide, Tourist (authorization/role checks at endpoints).
+- **Microservices** - independently deployable services, each with its own datastore.
+- **Gateway (Traefik)** - central entrypoint, routing, service discovery via labels.
+- **Communication** - REST, RPC (**gRPC**), and async pub/sub (**NATS**) where applicable.
+- **Observability** - Prometheus (metrics), Grafana (dashboards), Loki (logs), Jaeger (tracing), cAdvisor/Node Exporter (host & container metrics).
+- **Docker‑first** - reproducible builds, isolated networks, named volumes, and a single `docker compose` to run the stack.
+- **Security & Roles** - Admin, Guide, Tourist (authorization/role checks at endpoints).
 
 ---
 
-## Services (implemented / planned) 🧩
+## Services (implemented / planned)
 
-- **Auth Service** — registration, authentication, roles (Admin, Guide, Tourist).
-- **Blog Service** — blog posts, comments, likes (Markdown support).
-- **Tour Service** — tours, geo key points, statuses (draft/published/archived), distance calculation, position simulation & execution tracking.
-- **Followers Service** — follow graph & recommendations (**Neo4j**).
-- **Purchase Service** — cart, order items, checkout / purchase tokens.
-- **Gateway** — **Traefik** reverse proxy with per‑service routing.
-- **Monitoring Stack** — Prometheus, Grafana, Loki (+ Promtail), Jaeger, cAdvisor, Node Exporter.
+- **Auth Service** - registration, authentication, roles (Admin, Guide, Tourist).
+- **Blog Service** - blog posts, comments, likes (Markdown support).
+- **Tour Service** - tours, geo key points, statuses (draft/published/archived), distance calculation, position simulation & execution tracking.
+- **Followers Service** - follow graph & recommendations (**Neo4j**).
+- **Purchase Service** - cart, order items, checkout / purchase tokens.
+- **Gateway** - **Traefik** reverse proxy with per‑service routing.
+- **Monitoring Stack** - Prometheus, Grafana, Loki (+ Promtail), Jaeger, cAdvisor, Node Exporter.
 
 > Some services may be stubs or partially implemented in this iteration.
 
 ---
 
-## Tech Stack 🛠️
+## Tech Stack 
 
 - **Platform:** Docker, Docker Compose
 - **Gateway/Proxy:** Traefik
@@ -41,14 +41,14 @@ A service‑oriented, microservices‑based tourism platform developed as part o
 
 ---
 
-## Getting Started 🚀
+## Getting Started
 
-### Prerequisites 🧰
+### Prerequisites
 
 - Docker & Docker Compose installed
 - (Optional) Ensure the ports below are available on your machine
 
-### Quick Run ▶️
+### Quick Run
 
 ```bash
 docker compose up --build
@@ -56,7 +56,7 @@ docker compose up --build
 docker compose up -d --build
 ```
 
-### Default Local Endpoints 🌐
+### Default Local Endpoints
 
 - **Gateway (API entry):** `http://localhost:8080`
 - **Grafana:** `http://localhost:3000`
@@ -68,7 +68,7 @@ docker compose up -d --build
 
 ---
 
-## Docker & Gateway Notes 🐳
+## Docker & Gateway Notes
 
 - Each service has a dedicated **Dockerfile**; `docker-compose.yml` builds, networks, and runs everything together.
 - **Traefik** is configured via labels on services in `docker-compose.yml` for automatic routing and discovery.
@@ -77,16 +77,16 @@ docker compose up -d --build
 
 ---
 
-## Observability 🔭
+## Observability
 
-- **Metrics** — Services expose metrics endpoints consumed by **Prometheus**. **cAdvisor** and **Node Exporter** provide container and host metrics.
-- **Dashboards** — **Grafana** visualizes application and infra metrics (CPU, memory, FS, network, error rates, latency, RPS).
-- **Logs** — **Promtail** ships container logs to **Loki**; you can query and correlate logs in Grafana Explore.
-- **Tracing** — **Jaeger** collects distributed traces across REST/RPC requests; use it to analyze latency and bottlenecks.
+- **Metrics** - Services expose metrics endpoints consumed by **Prometheus**. **cAdvisor** and **Node Exporter** provide container and host metrics.
+- **Dashboards** - **Grafana** visualizes application and infra metrics (CPU, memory, FS, network, error rates, latency, RPS).
+- **Logs** - **Promtail** ships container logs to **Loki**; you can query and correlate logs in Grafana Explore.
+- **Tracing** - **Jaeger** collects distributed traces across REST/RPC requests; use it to analyze latency and bottlenecks.
 
 ---
 
-## Development 👨‍💻
+## Development
 
 - Run individual services locally or through Docker. Prefer Docker for parity with the full stack.
 - Configure environment variables via `.env` and service‑specific configs. **Do not commit real secrets.**
@@ -99,7 +99,7 @@ docker compose up -d --build
 
 ---
 
-## Authors 👥
+## Authors
 <a href="https://github.com/bgdj11">
   <img src="https://github.com/bgdj11.png?size=80" width="48" height="48" alt="@bgdj11" />
 </a>
